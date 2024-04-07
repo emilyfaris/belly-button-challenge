@@ -1,17 +1,16 @@
-// This script assumes your JSON has a similar structure to your example, adjusted to fit the assignment requirements
+// Reading the JSON data using D3
+const url = "https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json"
+d3.json(url).then(init);
 
-// Read the JSON data using D3
-d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then(init);
-
+// Displaying the default plot
 function init(data) {
-    // Extract data for the first sample to display default plots
     let firstSample = data.samples[0];
     let sampleValues = firstSample.sample_values.slice(0, 10);
     let otuIds = firstSample.otu_ids.slice(0, 10).map(otuID => `OTU ${otuID}`);
     let otuLabels = firstSample.otu_labels.slice(0, 10);
 
-    // Create the default bar plot
-    let trace = {
+    // Creating the default bar plot
+    let trace1 = {
         x: sampleValues,
         y: otuIds,
         text: otuLabels,
@@ -23,9 +22,11 @@ function init(data) {
         title: "Top 10 OTUs Found",
     };
 
-    Plotly.newPlot('bar', [trace], layout);
+    let data1 = [trace1]
 
-    // Populate the dropdown menu
+    Plotly.newPlot('bar', data1, layout);
+
+    // Populating the dropdown menu
     let dropdownMenu = d3.select("#selDataset");
     data.names.forEach((name) => {
         dropdownMenu.append("option").text(name).property("value", name);
