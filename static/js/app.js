@@ -40,8 +40,8 @@ function updateVisualizations(sampleId, data) {
 
 
 d3.selectAll("#selDataset").on("change", function() {
-    const newSampleId = d3.select(this).property("value");
-    d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then(data => updateVisualizations(newSampleId, data));
+    let newSampleId = d3.select(this).property("value");
+    d3.json(url).then(data => updateVisualizations(newSampleId, data));
 });
 
 
@@ -93,7 +93,7 @@ d3.selectAll("#selDataset").on("change", function() {
 
     // Metadata
     function displayMetadata(metadata) {
-        const panel = d3.select("#sample-metadata");
+        let panel = d3.select("#sample-metadata");
         panel.html(""); // Clear existing metadata
         
         Object.entries(metadata).forEach(([key, value]) => {
@@ -105,12 +105,12 @@ d3.selectAll("#selDataset").on("change", function() {
         });
     }
     
-    // Gauge Chart(wfreq)
+    // Gauge Chart (washing frequency)
     function updateGaugeChart(wfreq) {
         let trace3 = {
             domain: {x: [0, 1], y: [0, 1]},
             value: wfreq,
-            title: {text: "Weekly Washing Frequency"},
+            title: {text: "Belly Button Weekly Washing Frequency"},
             type: "indicator",
             mode: "gauge+number",
             gauge: {
