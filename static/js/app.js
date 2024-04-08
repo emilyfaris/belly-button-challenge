@@ -32,6 +32,7 @@ function updateVisualizations(sampleId, data) {
         updateBarChart(selectedSample);
         updateBubbleChart(selectedSample);
         displayMetadata(selectedMetadata);
+        updateGaugeChart(selectedMetadata.wfreq); 
     } else {
         console.error('No data found for selected ID:', sampleId);
     }
@@ -102,6 +103,41 @@ d3.selectAll("#selDataset").on("change", function() {
             }
             panel.append("h6").text(`${key.toUpperCase()}: ${displayValue}`);
         });
+    }
+    
+    // Gauge Chart(wfreq)
+    function updateGaugeChart(wfreq) {
+        let trace3 = {
+            domain: {x: [0, 1], y: [0, 1]},
+            value: wfreq,
+            title: {text: "Weekly Washing Frequency"},
+            type: "indicator",
+            mode: "gauge+number",
+            gauge: {
+                axis: {range: [null, 9]}, // Setting the range of the gauge from 0 to 9
+                steps: [
+                    {range: [0, 1], color: "#e6ffe6"},
+                    {range: [1, 2], color: "#ccffcc"},
+                    {range: [2, 3], color: "#b3ffb3"},
+                    {range: [3, 4], color: "#99ff99"},
+                    {range: [4, 5], color: "#80ff80"},
+                    {range: [5, 6], color: "#66ff66"},
+                    {range: [6, 7], color: "#4dff4d"},
+                    {range: [7, 8], color: "#33ff33"},
+                    {range: [8, 9], color: "#1aff1a"}
+                ],
+            }
+        };
+
+        let data3 = [trace3]
+    
+        let layout3 = {
+            width: 600,
+            height: 450,
+            margin: {t: 0, b: 0},
+        };
+    
+        Plotly.newPlot('gauge', data3, layout3);
     }
     
      
