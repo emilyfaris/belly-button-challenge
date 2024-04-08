@@ -1,24 +1,48 @@
 // Reading the JSON data using D3
 const url = "https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json"
 d3.json(url).then(data => {
-    console.log(data);
+    console.log('Data:', data);
     init(data);
 });
 
 
 // Initalizing the dashboard
+function init(data) {
+    // Populate dropdown menu
+    const dropdown = d3.select("#selDataset");
+    data.names.forEach(name => {
+        dropdown.append("option").text(name).property("value", name);
+    });
+
+    // Render initial visualizations
+    const firstSample = data.names[0];
+    updateVisualizations(firstSample, data);
+}
 
 
 // Updating visualizations based on drop down selection
-function updateBarChart(sample) {
-    let sampleValues = sample.sample_values.slice(0, 10);
-    let otuIds = sample.otu_ids.slice(0, 10).map(otuID => `OTU ${otuID}`);
-    let otuLabels = sample.otu_labels.slice(0, 10);
-
-    Plotly.restyle('bar', "x", [sampleValues]);
-    Plotly.restyle('bar', "y", [otuIds]);
-    Plotly.restyle('bar', "text", [otuLabels]);
+function updateVisualizations(sampleId, data) {
+    // Convert sampleId to a number for correct comparison
+    let numSampleId = parseInt(sampleId);
+    
+    let selectedSample = data.samples.find(sample => sample.id === sampleId);
+    let selectedMetadata = data.metadata.find(meta => meta.id === numSampleId);
+    
+    if (selectedSample && selectedMetadata) {
+        updateBarChart(selectedSample);
+        updateBubbleChart(selectedSample);
+        displayMetadata(selectedMetadata);
+    } else {
+        console.error('No data found for selected ID:', sampleId);
+    }
 }
+
+
+d3.selectAll("#selDataset").on("change", function() {
+    const newSampleId = d3.select(this).property("value");
+    d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then(data => updateVisualizations(newSampleId, data));
+});
+
 
 // Defining visualization functions
     // Bar Chart
@@ -67,4 +91,17 @@ function updateBarChart(sample) {
     }
 
     // Metadata
+    function displayMetadata(metadata) {
+        const panel = d3.select("#sample-metadata");
+        panel.html(""); // Clear existing metadata
+        
+        Object.entries(metadata).forEach(([key, value]) => {
+            let displayValue = value;
+            if (value === null || value === undefined) {
+                displayValue = "Not available"; 
+            }
+            panel.append("h6").text(`${key.toUpperCase()}: ${displayValue}`);
+        });
+    }
+    
      
